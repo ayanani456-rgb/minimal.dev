@@ -290,10 +290,20 @@ select option{background:var(--bg2)}
 
   <!-- ══ TOPBAR ══ -->
   <div class="topbar">
-    <div class="logo">
-      <span class="logo-name">TutorDesk</span>
-      <span class="logo-dot">·</span>
-      <span class="logo-by">by minimal.dev</span>
+    <div style="display:flex;align-items:center;gap:16px">
+      <a href="index.html" style="display:inline-flex;align-items:center;gap:6px;
+        font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);
+        text-decoration:none;border:1px solid var(--border);border-radius:7px;
+        padding:5px 11px;transition:all .2s;background:var(--bg3)"
+        onmouseover="this.style.color='var(--accent)';this.style.borderColor='var(--accent)'"
+        onmouseout="this.style.color='var(--text3)';this.style.borderColor='var(--border)'">
+        ← minimal.dev
+      </a>
+      <div class="logo">
+        <span class="logo-name">TutorDesk</span>
+        <span class="logo-dot">·</span>
+        <span class="logo-by">by minimal.dev</span>
+      </div>
     </div>
     <div class="topbar-right">
       <span class="theme-label" id="theme-lbl">dark</span>
