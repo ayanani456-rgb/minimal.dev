@@ -1,2 +1,2 @@
-# minimal.dev
+# grim.dev
 Free website project
