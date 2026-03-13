@@ -405,80 +405,82 @@ footer {
   #coords { right:24px; left:auto; }
 }
 
-/* ── INTRO SEQUENCE ── */
+/* ── ALIEN REVEAL INTRO ── */
 #intro {
   position: fixed; inset: 0;
-  background: var(--intro-bg);
   z-index: 100000;
   display: flex; justify-content: center; align-items: center;
-  transition: opacity 1.2s cubic-bezier(.16,1,.3,1), visibility 1.2s;
+  pointer-events: none;
 }
-#intro.hidden {
-  opacity: 0; visibility: hidden; pointer-events: none;
+.intro-curtain {
+  position: absolute; left: 0; width: 100%; height: 50vh;
+  background: var(--intro-bg, #000);
+  transition: transform 1.2s cubic-bezier(0.8, 0, 0.2, 1);
 }
-.intro-text-wrapper {
-  position: relative;
+.intro-curtain.top { top: 0; transform-origin: top; }
+.intro-curtain.bottom { bottom: 0; transform-origin: bottom; }
+
+.intro-dot {
+  position: absolute; left: 50%; top: 50%;
+  width: 2px; height: 2px;
+  background: var(--chrome);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  box-shadow: 0 0 10px 2px rgba(168,173,184,0.3);
+  opacity: 0;
+}
+
+.intro-text {
   font-family: var(--display);
   font-size: clamp(32px, 6vw, 80px);
-  color: var(--intro-text);
+  color: var(--chrome);
   letter-spacing: 12px;
-  overflow: hidden;
-}
-.intro-text {
-  display: inline-block;
+  position: relative; z-index: 2;
   opacity: 0;
-  transform: translateY(100%) scale(0.9);
-  animation: introRise 2s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+  transform: translateY(40px) scale(0.95);
+  filter: blur(10px);
 }
 
-.intro-text::before {
-  content: "NULL";
-  position: absolute;
-  top: 0; left: 0; width: 100%; height: 100%;
-  color: rgba(255, 255, 255, 0.2);
-  display: flex; justify-content: center; align-items: center;
-  animation: introGlitch 0.4s steps(2, start) infinite;
+/* Steps triggered by JS */
+.alien-reveal.step-1 .intro-dot {
+  animation: dotAppear 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+.alien-reveal.step-2 .intro-dot {
+  animation: lineStretch 1.1s cubic-bezier(0.8, 0, 0.2, 1) forwards;
+}
+.alien-reveal.step-3 .intro-curtain {
+  transform: scaleY(0);
+}
+.alien-reveal.step-3 .intro-text {
+  transition: opacity 2s ease, transform 2s cubic-bezier(0.2, 0.8, 0.2, 1), filter 2s ease;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+}
+.alien-reveal.step-inactive {
+  display: none !important;
 }
 
-@keyframes introRise {
-  0% { opacity: 0; transform: translateY(100%) scale(0.9); filter: blur(8px); }
-  50% { filter: blur(2px); }
-  100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+@keyframes dotAppear {
+  0% { opacity: 0; }
+  50% { opacity: 1; box-shadow: 0 0 20px 4px rgba(255,255,255,0.6); transform: translate(-50%, -50%) scale(1.5); }
+  100% { opacity: 1; box-shadow: 0 0 10px 2px rgba(168,173,184,0.3); transform: translate(-50%, -50%) scale(1); }
 }
-
-@keyframes introGlitch {
-  0% { transform: translate(0, 0); clip-path: inset(10% 0 80% 0); opacity: 1; }
-  20% { transform: translate(-2px, 2px); clip-path: inset(50% 0 30% 0); opacity: 0.8; }
-  40% { transform: translate(2px, -2px); clip-path: inset(80% 0 10% 0); opacity: 0.6; }
-  60% { transform: translate(-2px, 0); clip-path: inset(30% 0 50% 0); opacity: 0.9; }
-  80% { transform: translate(2px, 2px); clip-path: inset(10% 0 80% 0); opacity: 0.5; }
-  100% { transform: translate(0, 0); clip-path: inset(60% 0 20% 0); opacity: 1; }
-}
-
-.intro-line {
-  position: absolute; left: 50%; top: 50%;
-  width: 0; height: 1px;
-  background: var(--chrome);
-  transform: translate(-50%, -50%);
-  z-index: -1;
-  animation: lineExpand 1.5s cubic-bezier(0.19, 1, 0.22, 1) 1.2s forwards;
-}
-
-@keyframes lineExpand {
-  0% { width: 0; opacity: 0; }
-  50% { opacity: 0.5; }
-  100% { width: 120vw; opacity: 0; }
+@keyframes lineStretch {
+  0% { width: 2px; height: 2px; opacity: 1; border-radius: 50%; box-shadow: 0 0 10px 2px rgba(168,173,184,0.3); }
+  40% { width: 20vw; height: 1px; opacity: 1; border-radius: 0; box-shadow: 0 0 20px 2px rgba(255,255,255,0.7); }
+  100% { width: 150vw; height: 1px; opacity: 0; border-radius: 0; box-shadow: 0 0 5px 1px rgba(168,173,184,0.1); }
 }
 </style>
 </head>
 <body>
 
 <!-- INTRO SEQUENCE -->
-<div id="intro">
-  <div class="intro-line"></div>
-  <div class="intro-text-wrapper">
-    <div class="intro-text" id="intro-word">GRIM.DEV</div>
-  </div>
+<div id="intro" class="alien-reveal">
+  <div class="intro-curtain top"></div>
+  <div class="intro-curtain bottom"></div>
+  <div class="intro-dot"></div>
+  <div class="intro-text">GRIM.DEV</div>
 </div>
 
 <div id="grain"></div>
@@ -574,20 +576,26 @@ footer {
 /* INTRO LOGIC */
 document.addEventListener("DOMContentLoaded", () => {
   const intro = document.getElementById("intro");
-  const introWord = document.getElementById("intro-word");
+  if (!intro) return;
+  
+  // Step 1: Glowing dot appears (1.2s)
+  intro.classList.add("step-1");
 
-  // Keep the glitching NULL state for 1.8 seconds, then switch to real text
+  // Step 2: Dot stretches out into a horizontal cut (1.1s)
   setTimeout(() => {
-    introWord.style.setProperty('--intro-text', 'transparent'); // Hide the real text briefly
-    introWord.style.color = "var(--chrome)";
-  }, 1800);
+    intro.classList.replace("step-1", "step-2");
+  }, 1400);
 
-  // Fade out intro entirely after 3.2s
+  // Step 3: Curtains open and text rises
   setTimeout(() => {
-    intro.classList.add("hidden");
-    // Only start hero animations AFTER intro fades out
+    intro.classList.add("step-3");
     document.querySelector('.hero-title').classList.add('flicker');
-  }, 3200);
+  }, 2500);
+
+  // Clean up
+  setTimeout(() => {
+    intro.classList.add("step-inactive");
+  }, 5000);
 });
 
 /* CURSOR */
